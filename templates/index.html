@@ -8,45 +8,134 @@
 <meta name="theme-color" content="#1a1a1a">
 
 <style>
-body { margin:0; background:#0d0d0d; color:white; font-family:Arial; display:flex; flex-direction:column; height:100vh;}
-.header { padding:10px; background:#1a1a1a; display:flex; justify-content:space-between;}
-.chat-box { flex:1; overflow-y:auto; padding:10px;}
-.message { padding:10px; margin:5px; border-radius:10px; max-width:80%;}
-.user { background:#007bff; margin-left:auto;}
-.bot { background:#2a2a2a;}
-.input-area { padding:10px; background:#1a1a1a; display:flex; flex-direction:column; gap:5px;}
-.row { display:flex; gap:5px;}
-input, select, button { padding:10px; border:none; border-radius:5px;}
-.learn { background:green; color:white;}
-.quiz { background:blue; color:white;}
+body {
+    margin:0;
+    background:#0d0d0d;
+    color:white;
+    font-family:Arial;
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+}
+
+.header {
+    padding:10px;
+    background:#1a1a1a;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.chat-box {
+    flex:1;
+    overflow-y:auto;
+    padding:10px;
+}
+
+.message {
+    padding:10px;
+    margin:5px;
+    border-radius:10px;
+    max-width:80%;
+    white-space:pre-wrap;
+}
+
+.user {
+    background:#007bff;
+    margin-left:auto;
+}
+
+.bot {
+    background:#2a2a2a;
+}
+
+.input-area {
+    padding:10px;
+    background:#1a1a1a;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.row {
+    display:flex;
+    gap:5px;
+}
+
+input, select, button {
+    padding:10px;
+    border:none;
+    border-radius:5px;
+}
+
+button {
+    cursor:pointer;
+}
+
+.learn { background:green; color:white; }
+.quiz { background:blue; color:white; }
+.upload { background:purple; color:white; }
+
+.progress {
+    height:6px;
+    background:#333;
+}
+
+.progress-bar {
+    height:6px;
+    background:lime;
+}
 </style>
 </head>
 
 <body>
 
-<div id="loader" style="position:fixed;width:100%;height:100%;background:#0d0d0d;display:flex;align-items:center;justify-content:center;z-index:9999;">
-🧠 Loading...
+<!-- LOADER -->
+<div id="loader" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#0d0d0d;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;">
+🧠 Loading StudyAI...
 </div>
 
+<!-- HEADER -->
 <div class="header">
 <div>🧠 StudyAI</div>
 <div>👤 {{ name }} | 🎯 {{ score }}/{{ total }}</div>
 </div>
 
+<!-- PROGRESS -->
+<div class="progress">
+<div class="progress-bar" style="width: {{ (score/total*100) if total>0 else 0 }}%;"></div>
+</div>
+
 {% if not name %}
+
+<!-- NAME INPUT -->
 <form method="POST" style="padding:20px;">
-<input name="name" placeholder="Enter name">
+<input name="name" placeholder="Enter your name">
 <button name="set_name">Start</button>
 </form>
+
 {% else %}
 
+<!-- CHAT -->
 <div class="chat-box">
 {% for msg in chat %}
 <div class="message {{ msg.role }}">{{ msg.text }}</div>
 {% endfor %}
 </div>
 
-<form method="POST" class="input-area">
+<!-- MAIN FORM -->
+<form method="POST" enctype="multipart/form-data" class="input-area">
+
 <div class="row">
 <select name="subject">
 {% for s in subjects %}
@@ -60,11 +149,17 @@ input, select, button { padding:10px; border:none; border-radius:5px;}
 </div>
 
 <div class="row">
+<input type="file" name="file">
+</div>
+
+<div class="row">
 <button class="learn" name="mode" value="learn">Learn</button>
 <button class="quiz" name="mode" value="quiz">Quiz</button>
 </div>
+
 </form>
 
+<!-- QUIZ ANSWER -->
 <form method="POST" class="input-area">
 <input name="answer" placeholder="Answer quiz...">
 <button>Submit</button>
@@ -73,10 +168,13 @@ input, select, button { padding:10px; border:none; border-radius:5px;}
 {% endif %}
 
 <script>
-window.onload = () => document.getElementById("loader").style.display="none";
+window.onload = () => {
+    document.getElementById("loader").style.display = "none";
+};
 
+// SERVICE WORKER
 if ('serviceWorker' in navigator) {
- navigator.serviceWorker.register('/static/service-worker.js');
+    navigator.serviceWorker.register('/static/service-worker.js');
 }
 </script>
 
