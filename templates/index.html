@@ -1,31 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Study App</title>
+    <title>AI Study Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #1e1e1e;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+        }
+
+        .main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .learn-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .quiz-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .output {
+            margin-top: 20px;
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 150px;
+            white-space: pre-wrap;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>AI Study App</h2>
+<div class="container">
 
-<form method="POST">
-    <select name="subject">
-        <option>physics</option>
-        <option>chemistry</option>
-        <option>economics</option>
-    </select>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>📚 Study App</h2>
 
-    <br><br>
+        <form method="POST">
 
-    <input type="text" name="question" placeholder="Enter topic">
+            <label>Select Subject</label>
+            <select name="subject">
+                {% for sub in subjects %}
+                    <option value="{{ sub }}">{{ sub }}</option>
+                {% endfor %}
+            </select>
 
-    <br><br>
+            <input type="text" name="question" placeholder="Ask a topic... (optional)">
 
-    <button type="submit">Submit</button>
-</form>
+            <button class="learn-btn" name="mode" value="learn">📖 Learn</button>
+            <button class="quiz-btn" name="mode" value="quiz">🧪 Quiz</button>
 
-<hr>
+        </form>
+    </div>
 
-<pre>{{ result }}</pre>
+    <!-- Main Content -->
+    <div class="main">
+        <h1>🧠 AI Study Dashboard</h1>
+
+        <div class="output">
+            {% if result %}
+                {{ result }}
+            {% else %}
+                Welcome! Select a subject and choose Learn or Quiz.
+            {% endif %}
+        </div>
+    </div>
+
+</div>
 
 </body>
 </html>
