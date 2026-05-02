@@ -1,20 +1,46 @@
-{% extends "base.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
 
-<h2>🎯 Quiz</h2>
+<div class="container">
 
-<form method="POST">
-<button name="generate">Generate Quiz</button>
-</form>
+    <div class="sidebar">
+        <h2>🧠 StudyAI</h2>
+        <a href="/dashboard">🏠 Dashboard</a>
+        <a href="/learn">📚 Learn</a>
+        <a href="/quiz" class="active">🎯 Quiz</a>
+        <a href="/profile">👤 Profile</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
 
-{% if quiz %}
-<p>{{ quiz.question }}</p>
+    <div class="main">
 
-<form method="POST">
-{% for opt in quiz.options %}
-<button name="answer" value="{{ opt }}">{{ opt }}</button>
-{% endfor %}
-</form>
-{% endif %}
+        <h2>🎯 Quiz</h2>
 
-{% endblock %}
+        <!-- GENERATE BUTTON -->
+        <form method="POST">
+            <button name="generate">Generate Question</button>
+        </form>
+
+        {% if quiz %}
+            <div class="quiz-box">
+                <h3>{{ quiz.question }}</h3>
+
+                <form method="POST">
+                    {% for opt in quiz.options %}
+                        <button name="answer" value="{{ opt }}">{{ opt }}</button><br>
+                    {% endfor %}
+                </form>
+            </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,21 +1,44 @@
-{% extends "base.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Learn</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
 
-<h2>📚 Learn</h2>
+<div class="container">
 
-<p>Upload a file to learn from it</p>
+    <div class="sidebar">
+        <h2>🧠 StudyAI</h2>
+        <a href="/dashboard">🏠 Dashboard</a>
+        <a href="/learn" class="active">📚 Learn</a>
+        <a href="/quiz">🎯 Quiz</a>
+        <a href="/profile">👤 Profile</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
 
-<form method="POST" enctype="multipart/form-data">
-<input type="file" name="file">
-<button>Upload & Learn</button>
-</form>
+    <div class="main">
 
-<hr>
+        <h2>📚 Learn with AI</h2>
 
-<div>
-{% for msg in chat %}
-<p><b>{{ msg.role }}:</b> {{ msg.text }}</p>
-{% endfor %}
+        <!-- CHAT -->
+        <div class="chat-box">
+            {% for msg in chat %}
+                <div class="chat {{ msg.role }}">
+                    {{ msg.text }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- UPLOAD -->
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <button type="submit">Upload & Learn</button>
+        </form>
+
+    </div>
+
 </div>
 
-{% endblock %}
+</body>
+</html>

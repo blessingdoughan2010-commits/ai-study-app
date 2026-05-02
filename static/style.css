@@ -37,13 +37,13 @@ body {
     color: white;
 }
 
-/* MAIN */
+/* MAIN CONTENT */
 .main {
     flex: 1;
     padding: 30px;
 }
 
-/* TOP */
+/* TOP SECTION */
 .top {
     margin-bottom: 20px;
 }
@@ -84,4 +84,78 @@ body {
     border-radius: 8px;
     text-decoration: none;
     color: white;
+}
+
+/* ================= LEARN PAGE ================= */
+
+/* CHAT BOX */
+.chat-box {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 10px;
+    height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+/* CHAT MESSAGES */
+.chat {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 8px;
+    max-width: 80%;
+}
+
+/* BOT MESSAGE */
+.chat.bot {
+    background: #334155;
+    text-align: left;
+}
+
+/* USER MESSAGE */
+.chat.user {
+    background: #4f46e5;
+    text-align: right;
+    margin-left: auto;
+}
+
+/* FILE INPUT + BUTTON */
+form input[type="file"] {
+    margin-bottom: 10px;
+    color: white;
+}
+
+form button {
+    padding: 10px 15px;
+    background: #6366f1;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* ================= QUIZ PAGE ================= */
+
+.quiz-box {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 15px;
+}
+
+/* QUIZ OPTIONS */
+.quiz-box button {
+    margin: 5px 0;
+    padding: 10px;
+    width: 100%;
+    background: #6366f1;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.quiz-box button:hover {
+    background: #4f46e5;
 }
