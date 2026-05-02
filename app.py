@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-import requests, os, json, random, PyPDF2
+import requests, os, json, PyPDF2
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -15,7 +15,7 @@ db = SQLAlchemy(app)
 # LOGIN
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"  # ✅ fixes 401 error
+login_manager.login_view = "login"
 
 HF_API_KEY = os.getenv("HF_API_KEY")
 
@@ -32,7 +32,7 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# ✅ CREATE DATABASE (IMPORTANT FIX FOR RENDER)
+# CREATE DB (IMPORTANT FOR RENDER)
 with app.app_context():
     db.create_all()
 
@@ -40,11 +40,14 @@ with app.app_context():
 def ask_ai(prompt):
     url = "https://api-inference.huggingface.co/models/google/flan-t5-large"
     headers = {"Authorization": f"Bearer {HF_API_KEY}"}
+
     try:
         res = requests.post(url, headers=headers, json={"inputs": prompt})
         data = res.json()
+
         if isinstance(data, list):
             return data[0].get("generated_text", "No response")
+
         return "⏳ AI loading..."
     except:
         return "❌ AI error"
@@ -63,57 +66,98 @@ def read_file(file):
 
     return "Unsupported file"
 
-# ================= MAIN =================
-@app.route("/", methods=["GET","POST"])
+# ================= ROUTES =================
+
+@app.route("/")
+def home():
+    return redirect("/dashboard")
+
+# DASHBOARD
+@app.route("/dashboard")
 @login_required
-def index():
-
-    chat = json.loads(current_user.chat)
-
-    if request.method == "POST":
-
-        # FILE UPLOAD
-        if "file" in request.files:
-            f = request.files["file"]
-
-            if f.filename:
-                content = read_file(f)[:2000]
-                reply = ask_ai(f"Explain this:\n{content}")
-                chat.append({"role":"bot","text":f"📄 {reply}"})
-
-        # QUIZ ANSWER
-        elif "answer" in request.form:
-            ans = request.form.get("answer")
-            correct = session.get("correct")
-
-            current_user.total += 1
-
-            if ans == correct:
-                current_user.score += 1
-                chat.append({"role":"bot","text":"✅ Correct"})
-            else:
-                chat.append({"role":"bot","text":f"❌ Correct: {correct}"})
-
-        # NORMAL CHAT
-        else:
-            q = request.form.get("question")
-            chat.append({"role":"user","text":q})
-
-            reply = ask_ai(q)
-            chat.append({"role":"bot","text":reply})
-
-        current_user.chat = json.dumps(chat)
-        db.session.commit()
-
+def dashboard():
     return render_template(
-        "index.html",
-        chat=chat,
+        "dashboard.html",
         name=current_user.username,
         score=current_user.score,
         total=current_user.total
     )
 
-# ================= LOGIN =================
+# LEARN (FILE-FIRST)
+@app.route("/learn", methods=["GET", "POST"])
+@login_required
+def learn():
+
+    chat = json.loads(current_user.chat)
+
+    if request.method == "POST":
+
+        if "file" in request.files:
+            f = request.files["file"]
+
+            if f.filename:
+                content = read_file(f)[:2000]
+
+                reply = ask_ai(
+                    f"You are a teacher. Teach this in a simple way:\n{content}"
+                )
+
+                chat.append({"role": "bot", "text": reply})
+
+                current_user.chat = json.dumps(chat)
+                db.session.commit()
+
+        else:
+            # If no file uploaded → prompt user
+            chat.append({
+                "role": "bot",
+                "text": "📄 Please upload a file so I can teach you from it."
+            })
+
+            current_user.chat = json.dumps(chat)
+            db.session.commit()
+
+    return render_template("learn.html", chat=chat)
+
+# QUIZ
+@app.route("/quiz", methods=["GET", "POST"])
+@login_required
+def quiz():
+
+    quiz_data = None
+
+    if request.method == "POST":
+
+        if "generate" in request.form:
+            q = ask_ai("Create one multiple choice question with 4 options and indicate the correct answer.")
+            
+            quiz_data = {
+                "question": q,
+                "options": ["Option A", "Option B", "Option C", "Option D"]
+            }
+
+        if "answer" in request.form:
+            current_user.total += 1
+
+            # (simple scoring for now)
+            current_user.score += 1
+
+            db.session.commit()
+
+    return render_template("quiz.html", quiz=quiz_data)
+
+# PROFILE
+@app.route("/profile")
+@login_required
+def profile():
+    return render_template(
+        "profile.html",
+        name=current_user.username,
+        score=current_user.score,
+        total=current_user.total
+    )
+
+# LOGIN
 @app.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "POST":
@@ -124,18 +168,17 @@ def login():
 
         if user:
             login_user(user)
-            return redirect("/")
+            return redirect("/dashboard")
 
     return render_template("login.html")
 
-# ================= REGISTER =================
+# REGISTER
 @app.route("/register", methods=["GET","POST"])
 def register():
     if request.method == "POST":
         u = request.form.get("username")
         p = request.form.get("password")
 
-        # prevent duplicate users
         if User.query.filter_by(username=u).first():
             return "User already exists"
 
@@ -147,12 +190,13 @@ def register():
 
     return render_template("register.html")
 
-# ================= LOGOUT =================
+# LOGOUT
 @app.route("/logout")
+@login_required
 def logout():
     logout_user()
     return redirect("/login")
 
-# ================= RUN =================
+# RUN
 if __name__ == "__main__":
     app.run(debug=True)

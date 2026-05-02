@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>📚 Learn</h2>
+
+<p>Upload a file to learn from it</p>
+
+<form method="POST" enctype="multipart/form-data">
+<input type="file" name="file">
+<button>Upload & Learn</button>
+</form>
+
+<hr>
+
+<div>
+{% for msg in chat %}
+<p><b>{{ msg.role }}:</b> {{ msg.text }}</p>
+{% endfor %}
+</div>
+
+{% endblock %}

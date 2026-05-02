@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>🎯 Quiz</h2>
+
+<form method="POST">
+<button name="generate">Generate Quiz</button>
+</form>
+
+{% if quiz %}
+<p>{{ quiz.question }}</p>
+
+<form method="POST">
+{% for opt in quiz.options %}
+<button name="answer" value="{{ opt }}">{{ opt }}</button>
+{% endfor %}
+</form>
+{% endif %}
+
+{% endblock %}

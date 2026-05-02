@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Welcome, {{ name }}</h2>
+
+<p>🎯 Score: {{ score }}/{{ total }}</p>
+
+<p>👉 Start by uploading a file to learn</p>
+
+<a href="/learn">Go to Learn</a>
+
+{% endblock %}

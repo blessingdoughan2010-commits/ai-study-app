@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StudyAI</title>
+
+<style>
+body {
+    margin:0;
+    display:flex;
+    font-family:Arial;
+    background:#0d0d0d;
+    color:white;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width:220px;
+    background:#111;
+    height:100vh;
+    padding:15px;
+}
+
+.sidebar a {
+    display:block;
+    padding:10px;
+    margin:5px 0;
+    background:#1a1a1a;
+    color:white;
+    text-decoration:none;
+    border-radius:5px;
+}
+
+.sidebar a:hover {
+    background:#333;
+}
+
+/* MAIN */
+.main {
+    flex:1;
+    padding:20px;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    .sidebar {
+        display:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+<h3>🧠 StudyAI</h3>
+
+<a href="/dashboard">🏠 Dashboard</a>
+<a href="/learn">📚 Learn</a>
+<a href="/quiz">🎯 Quiz</a>
+<a href="/profile">👤 Profile</a>
+<a href="/logout">🚪 Logout</a>
+</div>
+
+<div class="main">
+{% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
