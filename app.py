@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 import requests, os, json, PyPDF2
@@ -68,11 +68,13 @@ def read_file(file):
 
 # ================= ROUTES =================
 
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
+# HOME (fix 404)
+@app.route("/")
+def home():
+    return redirect("/dashboard")
 
-# DASHBOARD
+# DASHBOARD (fixed)
+@app.route("/dashboard")
 @login_required
 def dashboard():
     return render_template(
@@ -107,7 +109,6 @@ def learn():
                 db.session.commit()
 
         else:
-            # If no file uploaded → prompt user
             chat.append({
                 "role": "bot",
                 "text": "📄 Please upload a file so I can teach you from it."
@@ -137,10 +138,7 @@ def quiz():
 
         if "answer" in request.form:
             current_user.total += 1
-
-            # (simple scoring for now)
             current_user.score += 1
-
             db.session.commit()
 
     return render_template("quiz.html", quiz=quiz_data)
