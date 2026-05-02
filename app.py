@@ -3,6 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 import requests, os, json, PyPDF2
 
+# For EXE
+import webbrowser
+import threading
+
 app = Flask(__name__)
 app.secret_key = "secret123"
 
@@ -214,6 +218,14 @@ def logout():
     logout_user()
     return redirect("/login")
 
+# ================= AUTO OPEN (LOCAL ONLY) =================
+def open_browser():
+    webbrowser.open("http://127.0.0.1:5000")
+
 # RUN
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Only open browser locally (not on Render)
+    if os.environ.get("RENDER") is None:
+        threading.Timer(1, open_browser).start()
+
+    app.run(host="0.0.0.0", port=5000)
