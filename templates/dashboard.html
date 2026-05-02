@@ -1,12 +1,39 @@
-{% extends "base.html" %}
-{% block content %}
+<div class="main-content">
+    <div class="top-card">
+        <h2>Welcome back, {{ user.username }} 👋</h2>
+        <p>Ready to continue your learning journey?</p>
+    </div>
 
-<h2>Welcome, {{ name }}</h2>
+    <div class="stats">
+        <div class="card">
+            <h3>📚 Topics</h3>
+            <p>0</p>
+        </div>
+        <div class="card">
+            <h3>🧠 Quizzes</h3>
+            <p>0</p>
+        </div>
+        <div class="card">
+            <h3>🏆 Best Score</h3>
+            <p>0%</p>
+        </div>
+        <div class="card">
+            <h3>⏱ Time</h3>
+            <p>0m</p>
+        </div>
+    </div>
 
-<p>🎯 Score: {{ score }}/{{ total }}</p>
+    <div class="actions">
+        <div class="action-card">
+            <h3>🚀 Start Learning</h3>
+            <p>Upload a file and let AI teach you</p>
+            <a href="/learn">Start</a>
+        </div>
 
-<p>👉 Start by uploading a file to learn</p>
-
-<a href="/learn">Go to Learn</a>
-
-{% endblock %}
+        <div class="action-card">
+            <h3>🎯 Take Quiz</h3>
+            <p>Test your knowledge</p>
+            <a href="/quiz">Start</a>
+        </div>
+    </div>
+</div>
