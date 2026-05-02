@@ -32,7 +32,7 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# CREATE DB (IMPORTANT FOR RENDER)
+# CREATE DB
 with app.app_context():
     db.create_all()
 
@@ -49,31 +49,42 @@ def ask_ai(prompt):
             return data[0].get("generated_text", "No response")
 
         return "⏳ AI loading..."
-    except:
+    except Exception as e:
+        print("AI ERROR:", e)
         return "❌ AI error"
 
 # ================= FILE =================
 def read_file(file):
-    if file.filename.endswith(".txt"):
-        return file.read().decode("utf-8")
+    try:
+        if file.filename.endswith(".txt"):
+            return file.read().decode("utf-8")
 
-    if file.filename.endswith(".pdf"):
-        reader = PyPDF2.PdfReader(file)
-        text = ""
-        for p in reader.pages:
-            text += p.extract_text() or ""
-        return text
+        if file.filename.endswith(".pdf"):
+            reader = PyPDF2.PdfReader(file)
+            text = ""
 
-    return "Unsupported file"
+            for page in reader.pages:
+                content = page.extract_text()
+                if content:
+                    text += content
+
+            if text.strip() == "":
+                return "⚠️ Could not read text from PDF."
+
+            return text
+
+        return "Unsupported file format"
+
+    except Exception as e:
+        print("PDF ERROR:", e)
+        return "❌ Error reading file"
 
 # ================= ROUTES =================
 
-# HOME (fix 404)
 @app.route("/")
 def home():
     return redirect("/dashboard")
 
-# DASHBOARD (fixed)
 @app.route("/dashboard")
 @login_required
 def dashboard():
@@ -84,7 +95,7 @@ def dashboard():
         total=current_user.total
     )
 
-# LEARN (FILE-FIRST)
+# ================= LEARN =================
 @app.route("/learn", methods=["GET", "POST"])
 @login_required
 def learn():
@@ -93,33 +104,42 @@ def learn():
 
     if request.method == "POST":
 
-        if "file" in request.files:
-            f = request.files["file"]
-
-            if f.filename:
-                content = read_file(f)[:2000]
-
-                reply = ask_ai(
-                    f"You are a teacher. Teach this in a simple way:\n{content}"
-                )
-
-                chat.append({"role": "bot", "text": reply})
-
-                current_user.chat = json.dumps(chat)
-                db.session.commit()
-
-        else:
+        if "file" not in request.files:
             chat.append({
                 "role": "bot",
-                "text": "📄 Please upload a file so I can teach you from it."
+                "text": "📄 Please upload a file."
             })
 
-            current_user.chat = json.dumps(chat)
-            db.session.commit()
+        else:
+            f = request.files["file"]
+
+            if f.filename == "":
+                chat.append({
+                    "role": "bot",
+                    "text": "⚠️ No file selected."
+                })
+
+            else:
+                content = read_file(f)
+
+                if "❌" in content or "⚠️" in content:
+                    chat.append({
+                        "role": "bot",
+                        "text": content
+                    })
+                else:
+                    reply = ask_ai(
+                        f"You are a teacher. Teach this simply:\n{content[:1500]}"
+                    )
+
+                    chat.append({"role": "bot", "text": reply})
+
+        current_user.chat = json.dumps(chat)
+        db.session.commit()
 
     return render_template("learn.html", chat=chat)
 
-# QUIZ
+# ================= QUIZ =================
 @app.route("/quiz", methods=["GET", "POST"])
 @login_required
 def quiz():
@@ -130,7 +150,7 @@ def quiz():
 
         if "generate" in request.form:
             q = ask_ai("Create one multiple choice question with 4 options and indicate the correct answer.")
-            
+
             quiz_data = {
                 "question": q,
                 "options": ["Option A", "Option B", "Option C", "Option D"]
@@ -143,7 +163,7 @@ def quiz():
 
     return render_template("quiz.html", quiz=quiz_data)
 
-# PROFILE
+# ================= PROFILE =================
 @app.route("/profile")
 @login_required
 def profile():
@@ -154,7 +174,7 @@ def profile():
         total=current_user.total
     )
 
-# LOGIN
+# ================= LOGIN =================
 @app.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "POST":
@@ -169,7 +189,7 @@ def login():
 
     return render_template("login.html")
 
-# REGISTER
+# ================= REGISTER =================
 @app.route("/register", methods=["GET","POST"])
 def register():
     if request.method == "POST":
@@ -187,7 +207,7 @@ def register():
 
     return render_template("register.html")
 
-# LOGOUT
+# ================= LOGOUT =================
 @app.route("/logout")
 @login_required
 def logout():

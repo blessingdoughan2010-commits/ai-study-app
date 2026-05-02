@@ -4,30 +4,28 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
 
-    <!-- LINK TO CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-<div style="display: flex;">
+<div class="container">
 
     <!-- SIDEBAR -->
     <div class="sidebar">
         <h2>🧠 StudyAI</h2>
 
-        <a href="/dashboard">🏠 Dashboard</a>
+        <a href="/dashboard" class="active">🏠 Dashboard</a>
         <a href="/learn">📚 Learn</a>
         <a href="/quiz">🎯 Quiz</a>
         <a href="/profile">👤 Profile</a>
         <a href="/logout">🚪 Logout</a>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
+    <!-- MAIN -->
+    <div class="main">
 
-        <!-- TOP CARD -->
-        <div class="top-card">
-            <h2>Welcome back 👋</h2>
+        <div class="top">
+            <h1>Welcome back 👋</h1>
             <p>Ready to continue your learning journey?</p>
         </div>
 
@@ -35,17 +33,17 @@
         <div class="stats">
             <div class="card">
                 <h3>📚 Topics</h3>
-                <p>0</p>
+                <p>{{ total }}</p>
             </div>
 
             <div class="card">
                 <h3>🧠 Quizzes</h3>
-                <p>0</p>
+                <p>{{ total }}</p>
             </div>
 
             <div class="card">
-                <h3>🏆 Best Score</h3>
-                <p>0%</p>
+                <h3>🏆 Score</h3>
+                <p>{{ score }}</p>
             </div>
 
             <div class="card">
@@ -56,13 +54,13 @@
 
         <!-- ACTIONS -->
         <div class="actions">
-            <div class="action-card">
+            <div class="action">
                 <h3>🚀 Start Learning</h3>
                 <p>Upload a file and let AI teach you</p>
                 <a href="/learn">Start</a>
             </div>
 
-            <div class="action-card">
+            <div class="action">
                 <h3>🎯 Take Quiz</h3>
                 <p>Test your knowledge</p>
                 <a href="/quiz">Start</a>
@@ -70,6 +68,7 @@
         </div>
 
     </div>
+
 </div>
 
 </body>
