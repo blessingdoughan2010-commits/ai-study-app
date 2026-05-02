@@ -1,39 +1,76 @@
-<div class="main-content">
-    <div class="top-card">
-        <h2>Welcome back, {{ user.username }} 👋</h2>
-        <p>Ready to continue your learning journey?</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+
+    <!-- LINK TO CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div style="display: flex;">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>🧠 StudyAI</h2>
+
+        <a href="/dashboard">🏠 Dashboard</a>
+        <a href="/learn">📚 Learn</a>
+        <a href="/quiz">🎯 Quiz</a>
+        <a href="/profile">👤 Profile</a>
+        <a href="/logout">🚪 Logout</a>
     </div>
 
-    <div class="stats">
-        <div class="card">
-            <h3>📚 Topics</h3>
-            <p>0</p>
-        </div>
-        <div class="card">
-            <h3>🧠 Quizzes</h3>
-            <p>0</p>
-        </div>
-        <div class="card">
-            <h3>🏆 Best Score</h3>
-            <p>0%</p>
-        </div>
-        <div class="card">
-            <h3>⏱ Time</h3>
-            <p>0m</p>
-        </div>
-    </div>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
 
-    <div class="actions">
-        <div class="action-card">
-            <h3>🚀 Start Learning</h3>
-            <p>Upload a file and let AI teach you</p>
-            <a href="/learn">Start</a>
+        <!-- TOP CARD -->
+        <div class="top-card">
+            <h2>Welcome back 👋</h2>
+            <p>Ready to continue your learning journey?</p>
         </div>
 
-        <div class="action-card">
-            <h3>🎯 Take Quiz</h3>
-            <p>Test your knowledge</p>
-            <a href="/quiz">Start</a>
+        <!-- STATS -->
+        <div class="stats">
+            <div class="card">
+                <h3>📚 Topics</h3>
+                <p>0</p>
+            </div>
+
+            <div class="card">
+                <h3>🧠 Quizzes</h3>
+                <p>0</p>
+            </div>
+
+            <div class="card">
+                <h3>🏆 Best Score</h3>
+                <p>0%</p>
+            </div>
+
+            <div class="card">
+                <h3>⏱ Time</h3>
+                <p>0m</p>
+            </div>
         </div>
+
+        <!-- ACTIONS -->
+        <div class="actions">
+            <div class="action-card">
+                <h3>🚀 Start Learning</h3>
+                <p>Upload a file and let AI teach you</p>
+                <a href="/learn">Start</a>
+            </div>
+
+            <div class="action-card">
+                <h3>🎯 Take Quiz</h3>
+                <p>Test your knowledge</p>
+                <a href="/quiz">Start</a>
+            </div>
+        </div>
+
     </div>
 </div>
+
+</body>
+</html>

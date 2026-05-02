@@ -68,9 +68,9 @@ def read_file(file):
 
 # ================= ROUTES =================
 
-@app.route("/")
-def home():
-    return redirect("/dashboard")
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
 
 # DASHBOARD
 @app.route("/dashboard")
